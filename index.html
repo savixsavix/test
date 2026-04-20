@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Activity Tracker</title>
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+  <header>
+    <h1>Activity Tracker</h1>
+    <nav>
+      <button class="nav-btn active" data-view="view-list">Lista</button>
+      <button class="nav-btn" data-view="view-stats">Statystyki</button>
+    </nav>
+  </header>
+
+  <main>
+
+    <!-- ==================== WIDOK: Lista ==================== -->
+    <section id="view-list" class="view active">
+
+      <div class="toolbar">
+        <button id="btn-add" class="btn btn-primary">+ Dodaj aktywność</button>
+        <div class="import-export">
+          <button id="btn-export" class="btn">Eksportuj JSON</button>
+          <button id="btn-import-file" class="btn">Importuj JSON</button>
+          <input type="file" id="import-file-input" accept=".json" style="display:none">
+          <span id="import-error" class="import-error" style="display:none"></span>
+        </div>
+      </div>
+
+      <div class="filters" role="search" aria-label="Filtry i sortowanie">
+        <div class="filter-group">
+          <label for="filter-type">Typ aktywności</label>
+          <input type="text" id="filter-type" placeholder="np. bieg">
+        </div>
+        <div class="filter-group">
+          <label for="filter-date-from">Data od</label>
+          <input type="date" id="filter-date-from">
+        </div>
+        <div class="filter-group">
+          <label for="filter-date-to">Data do</label>
+          <input type="date" id="filter-date-to">
+        </div>
+        <div class="filter-group">
+          <label for="sort-field">Sortuj po</label>
+          <select id="sort-field">
+            <option value="date">Data</option>
+            <option value="duration">Czas</option>
+            <option value="distance">Dystans</option>
+          </select>
+        </div>
+        <div class="filter-group">
+          <label for="sort-direction">Kierunek</label>
+          <select id="sort-direction">
+            <option value="desc">Malejąco</option>
+            <option value="asc">Rosnąco</option>
+          </select>
+        </div>
+        <button id="filter-reset" class="btn">Resetuj filtry</button>
+      </div>
+
+      <div id="entries-container" role="list" aria-label="Lista aktywności"></div>
+
+    </section>
+
+    <!-- ==================== WIDOK: Formularz ==================== -->
+    <section id="view-form" class="view">
+
+      <h2 id="form-title">Dodaj aktywność</h2>
+
+      <form id="activity-form" novalidate>
+        <input type="hidden" id="form-id">
+
+        <div class="form-group">
+          <label for="field-date">Data *</label>
+          <input type="date" id="field-date" required>
+          <span class="error-msg" style="display:none"></span>
+        </div>
+
+        <div class="form-group">
+          <label for="field-type">Typ aktywności *</label>
+          <input type="text" id="field-type" placeholder="np. bieg, rower, siłownia" required>
+          <span class="error-msg" style="display:none"></span>
+        </div>
+
+        <div class="form-group">
+          <label for="field-title">Tytuł *</label>
+          <input type="text" id="field-title" placeholder="Krótki opis aktywności" required>
+          <span class="error-msg" style="display:none"></span>
+        </div>
+
+        <div class="form-group">
+          <label for="field-duration">Czas (minuty) *</label>
+          <input type="number" id="field-duration" min="0" value="0" required>
+          <span class="error-msg" style="display:none"></span>
+        </div>
+
+        <div class="form-group">
+          <label for="field-distance">Dystans (km)</label>
+          <input type="number" id="field-distance" min="0" step="0.1" value="0">
+          <span class="error-msg" style="display:none"></span>
+        </div>
+
+        <div class="form-group">
+          <label for="field-notes">Notatki</label>
+          <textarea id="field-notes" rows="3" placeholder="Opcjonalne uwagi..."></textarea>
+        </div>
+
+        <div class="form-actions">
+          <button type="submit" class="btn btn-primary">Zapisz</button>
+          <button type="button" id="btn-cancel" class="btn">Anuluj</button>
+        </div>
+      </form>
+
+    </section>
+
+    <!-- ==================== WIDOK: Statystyki ==================== -->
+    <section id="view-stats" class="view">
+
+      <h2>Statystyki</h2>
+      <div class="stats-grid">
+        <div class="stat-card">
+          <div class="stat-value" id="stat-count">0</div>
+          <div class="stat-label">Aktywności</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-value" id="stat-duration">0 min</div>
+          <div class="stat-label">Łączny czas</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-value" id="stat-distance">0.0 km</div>
+          <div class="stat-label">Łączny dystans</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-value" id="stat-top-type">–</div>
+          <div class="stat-label">Najczęstszy typ</div>
+        </div>
+      </div>
+
+    </section>
+
+  </main>
+
+  <!-- ==================== MODAL: Potwierdzenie usunięcia ==================== -->
+  <div id="confirm-delete" class="modal-overlay" role="dialog" aria-modal="true" aria-labelledby="confirm-delete-heading">
+    <div class="modal">
+      <p id="confirm-delete-heading">Czy na pewno chcesz usunąć tę aktywność?</p>
+      <div class="modal-actions">
+        <button id="confirm-delete-yes" class="btn btn-danger">Usuń</button>
+        <button id="confirm-delete-no" class="btn">Anuluj</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ==================== MODAL: Potwierdzenie importu ==================== -->
+  <div id="confirm-import" class="modal-overlay" role="dialog" aria-modal="true" aria-labelledby="confirm-import-heading">
+    <div class="modal">
+      <p id="confirm-import-heading">Jak chcesz zaimportować dane?</p>
+      <p class="modal-sub">
+        <strong>Zastąp</strong> – usuwa obecne dane i wczytuje nowe.<br>
+        <strong>Scal</strong> – dodaje nowe wpisy do istniejących (pomija duplikaty wg ID).
+      </p>
+      <div class="modal-actions">
+        <button id="confirm-import-replace" class="btn btn-danger">Zastąp dane</button>
+        <button id="confirm-import-merge" class="btn btn-primary">Scal z istniejącymi</button>
+        <button id="confirm-import-cancel" class="btn">Anuluj</button>
+      </div>
+    </div>
+  </div>
+
+  <script src="js/storage.js"></script>
+  <script src="js/app.js"></script>
+</body>
+</html>
