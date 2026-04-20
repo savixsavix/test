@@ -21,7 +21,7 @@ function showView(viewId) {
 
 function openAddForm() {
   document.getElementById('form-id').value = '';
-  document.getElementById('form-title').textContent = 'Dodaj aktywność';
+  document.getElementById('form-title').textContent = t('form.addTitle');
   document.getElementById('activity-form').reset();
   document.getElementById('field-duration').value = '0';
   document.getElementById('field-distance').value = '0';
@@ -34,7 +34,7 @@ function openEditForm(id) {
   if (!entry) return;
 
   document.getElementById('form-id').value       = entry.id;
-  document.getElementById('form-title').textContent = 'Edytuj aktywność';
+  document.getElementById('form-title').textContent = t('form.editTitle');
   document.getElementById('field-date').value     = entry.date;
   document.getElementById('field-type').value     = entry.type;
   document.getElementById('field-title').value    = entry.title;
@@ -48,31 +48,11 @@ function openEditForm(id) {
 // ─── Formularz – walidacja ────────────────────────────────────────────────────
 
 const FORM_FIELDS = [
-  {
-    id:    'field-title',
-    check: v => v.trim() !== '',
-    msg:   'Tytuł jest wymagany',
-  },
-  {
-    id:    'field-date',
-    check: v => v !== '' && !isNaN(Date.parse(v)),
-    msg:   'Podaj poprawną datę',
-  },
-  {
-    id:    'field-type',
-    check: v => v.trim() !== '',
-    msg:   'Typ aktywności jest wymagany',
-  },
-  {
-    id:    'field-duration',
-    check: v => v !== '' && Number(v) >= 0,
-    msg:   'Czas musi być liczbą ≥ 0',
-  },
-  {
-    id:    'field-distance',
-    check: v => v !== '' && Number(v) >= 0,
-    msg:   'Dystans musi być liczbą ≥ 0',
-  },
+  { id: 'field-title',    check: v => v.trim() !== '',              msgKey: 'err.title' },
+  { id: 'field-date',     check: v => v !== '' && !isNaN(Date.parse(v)), msgKey: 'err.date' },
+  { id: 'field-type',     check: v => v.trim() !== '',              msgKey: 'err.type' },
+  { id: 'field-duration', check: v => v !== '' && Number(v) >= 0,  msgKey: 'err.duration' },
+  { id: 'field-distance', check: v => v !== '' && Number(v) >= 0,  msgKey: 'err.distance' },
 ];
 
 function validateForm() {
@@ -81,7 +61,7 @@ function validateForm() {
   for (const field of FORM_FIELDS) {
     const el = document.getElementById(field.id);
     if (!field.check(el.value)) {
-      showFieldError(el, field.msg);
+      showFieldError(el, t(field.msgKey));
       valid = false;
     }
   }
@@ -92,8 +72,8 @@ function showFieldError(el, msg) {
   el.classList.add('field-error');
   const errEl = el.nextElementSibling;
   if (errEl && errEl.classList.contains('error-msg')) {
-    errEl.textContent    = msg;
-    errEl.style.display  = 'block';
+    errEl.textContent   = msg;
+    errEl.style.display = 'block';
   }
 }
 
@@ -146,7 +126,7 @@ function renderList() {
   container.innerHTML = '';
 
   if (entries.length === 0) {
-    container.innerHTML = '<p class="empty-msg">Brak aktywności. Dodaj pierwszą!</p>';
+    container.innerHTML = `<p class="empty-msg">${escapeHtml(t('list.empty'))}</p>`;
     return;
   }
 
@@ -160,7 +140,7 @@ function createEntryCard(entry) {
   card.setAttribute('role', 'listitem');
 
   const distanceHtml = entry.distance > 0
-    ? `<span>${entry.distance} km</span>`
+    ? `<span>${entry.distance} ${t('entry.km')}</span>`
     : '';
   const notesHtml = entry.notes
     ? `<div class="entry-notes">${escapeHtml(entry.notes)}</div>`
@@ -173,13 +153,13 @@ function createEntryCard(entry) {
     </div>
     <div class="entry-title">${escapeHtml(entry.title)}</div>
     <div class="entry-meta">
-      <span>${entry.duration} min</span>
+      <span>${entry.duration} ${t('entry.min')}</span>
       ${distanceHtml}
     </div>
     ${notesHtml}
     <div class="entry-actions">
-      <button class="btn btn-edit"   data-id="${escapeHtml(entry.id)}">Edytuj</button>
-      <button class="btn btn-delete" data-id="${escapeHtml(entry.id)}">Usuń</button>
+      <button class="btn btn-edit"   data-id="${escapeHtml(entry.id)}">${t('entry.edit')}</button>
+      <button class="btn btn-delete" data-id="${escapeHtml(entry.id)}">${t('entry.delete')}</button>
     </div>
   `;
 
@@ -241,7 +221,7 @@ function renderStats() {
   document.getElementById('stat-distance').textContent = `${totalKm.toFixed(1)} km`;
 
   if (entries.length === 0) {
-    document.getElementById('stat-top-type').textContent = '–';
+    document.getElementById('stat-top-type').textContent = t('stats.none');
   } else {
     const counts = {};
     entries.forEach(e => { counts[e.type] = (counts[e.type] || 0) + 1; });
@@ -271,12 +251,12 @@ function importJSON(file) {
     try {
       const data = JSON.parse(e.target.result);
       if (!validateImportData(data)) {
-        showImportError('Nieprawidłowa struktura pliku – brakuje wymaganych pól.');
+        showImportError(t('import.errStructure'));
         return;
       }
       showImportModal(data);
     } catch {
-      showImportError('Nie można odczytać pliku – nieprawidłowy JSON.');
+      showImportError(t('import.errJson'));
     }
   };
   reader.readAsText(file);
@@ -290,7 +270,7 @@ function validateImportData(data) {
 
 function showImportError(msg) {
   const el = document.getElementById('import-error');
-  el.textContent  = msg;
+  el.textContent   = msg;
   el.style.display = 'block';
 }
 
@@ -307,6 +287,9 @@ function initEvents() {
   document.querySelectorAll('.nav-btn').forEach(btn => {
     btn.addEventListener('click', () => showView(btn.dataset.view));
   });
+
+  // Przełącznik języka
+  document.getElementById('btn-lang').addEventListener('click', toggleLanguage);
 
   // Formularz
   document.getElementById('activity-form').addEventListener('submit', handleFormSubmit);
@@ -341,15 +324,13 @@ function initEvents() {
     document.getElementById('confirm-delete').classList.remove('active');
   });
 
-  // Filtry
+  // Filtry i sortowanie
   document.getElementById('filter-type').addEventListener('input',      applyFilters);
   document.getElementById('filter-date-from').addEventListener('input', applyFilters);
   document.getElementById('filter-date-to').addEventListener('input',   applyFilters);
   document.getElementById('filter-reset').addEventListener('click',     resetFilters);
-
-  // Sortowanie
-  document.getElementById('sort-field').addEventListener('change',     applySort);
-  document.getElementById('sort-direction').addEventListener('change', applySort);
+  document.getElementById('sort-field').addEventListener('change',      applySort);
+  document.getElementById('sort-direction').addEventListener('change',  applySort);
 
   // Eksport
   document.getElementById('btn-export').addEventListener('click', exportJSON);
@@ -375,9 +356,9 @@ function initEvents() {
     showView('view-list');
   });
   document.getElementById('confirm-import-merge').addEventListener('click', () => {
-    const modal      = document.getElementById('confirm-import');
-    const incoming   = JSON.parse(modal.dataset.pendingImport || '[]');
-    const existing   = loadEntries();
+    const modal     = document.getElementById('confirm-import');
+    const incoming  = JSON.parse(modal.dataset.pendingImport || '[]');
+    const existing  = loadEntries();
     const existingIds = new Set(existing.map(e => e.id));
     saveEntries([...existing, ...incoming.filter(e => !existingIds.has(e.id))]);
     modal.classList.remove('active');
@@ -417,5 +398,6 @@ function applySort() {
 
 document.addEventListener('DOMContentLoaded', () => {
   initEvents();
+  applyTranslations();
   showView('view-list');
 });

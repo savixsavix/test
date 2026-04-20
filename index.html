@@ -10,10 +10,13 @@
 
   <header>
     <h1>Activity Tracker</h1>
-    <nav>
-      <button class="nav-btn active" data-view="view-list">Lista</button>
-      <button class="nav-btn" data-view="view-stats">Statystyki</button>
-    </nav>
+    <div class="header-right">
+      <nav>
+        <button class="nav-btn active" data-view="view-list" data-i18n="nav.list">Lista</button>
+        <button class="nav-btn" data-view="view-stats" data-i18n="nav.stats">Statystyki</button>
+      </nav>
+      <button id="btn-lang" class="btn btn-lang">EN</button>
+    </div>
   </header>
 
   <main>
@@ -22,10 +25,10 @@
     <section id="view-list" class="view active">
 
       <div class="toolbar">
-        <button id="btn-add" class="btn btn-primary">+ Dodaj aktywność</button>
+        <button id="btn-add" class="btn btn-primary" data-i18n="btn.add">+ Dodaj aktywność</button>
         <div class="import-export">
-          <button id="btn-export" class="btn">Eksportuj JSON</button>
-          <button id="btn-import-file" class="btn">Importuj JSON</button>
+          <button id="btn-export" class="btn" data-i18n="btn.export">Eksportuj JSON</button>
+          <button id="btn-import-file" class="btn" data-i18n="btn.import">Importuj JSON</button>
           <input type="file" id="import-file-input" accept=".json" style="display:none">
           <span id="import-error" class="import-error" style="display:none"></span>
         </div>
@@ -33,19 +36,20 @@
 
       <div class="filters" role="search" aria-label="Filtry i sortowanie">
         <div class="filter-group">
-          <label for="filter-type">Typ aktywności</label>
-          <input type="text" id="filter-type" placeholder="np. bieg">
+          <label for="filter-type" data-i18n="filter.type">Typ aktywności</label>
+          <input type="text" id="filter-type"
+            data-i18n-placeholder="filter.type.placeholder" placeholder="np. bieg">
         </div>
         <div class="filter-group">
-          <label for="filter-date-from">Data od</label>
+          <label for="filter-date-from" data-i18n="filter.dateFrom">Data od</label>
           <input type="date" id="filter-date-from">
         </div>
         <div class="filter-group">
-          <label for="filter-date-to">Data do</label>
+          <label for="filter-date-to" data-i18n="filter.dateTo">Data do</label>
           <input type="date" id="filter-date-to">
         </div>
         <div class="filter-group">
-          <label for="sort-field">Sortuj po</label>
+          <label for="sort-field" data-i18n="filter.sortBy">Sortuj po</label>
           <select id="sort-field">
             <option value="date">Data</option>
             <option value="duration">Czas</option>
@@ -53,13 +57,13 @@
           </select>
         </div>
         <div class="filter-group">
-          <label for="sort-direction">Kierunek</label>
+          <label for="sort-direction" data-i18n="filter.direction">Kierunek</label>
           <select id="sort-direction">
             <option value="desc">Malejąco</option>
             <option value="asc">Rosnąco</option>
           </select>
         </div>
-        <button id="filter-reset" class="btn">Resetuj filtry</button>
+        <button id="filter-reset" class="btn" data-i18n="filter.reset">Resetuj filtry</button>
       </div>
 
       <div id="entries-container" role="list" aria-label="Lista aktywności"></div>
@@ -75,43 +79,49 @@
         <input type="hidden" id="form-id">
 
         <div class="form-group">
-          <label for="field-date">Data *</label>
+          <label for="field-date" data-i18n="field.date">Data *</label>
           <input type="date" id="field-date" required>
           <span class="error-msg" style="display:none"></span>
         </div>
 
         <div class="form-group">
-          <label for="field-type">Typ aktywności *</label>
-          <input type="text" id="field-type" placeholder="np. bieg, rower, siłownia" required>
+          <label for="field-type" data-i18n="field.type">Typ aktywności *</label>
+          <input type="text" id="field-type"
+            data-i18n-placeholder="field.type.placeholder"
+            placeholder="np. bieg, rower, siłownia" required>
           <span class="error-msg" style="display:none"></span>
         </div>
 
         <div class="form-group">
-          <label for="field-title">Tytuł *</label>
-          <input type="text" id="field-title" placeholder="Krótki opis aktywności" required>
+          <label for="field-title" data-i18n="field.title">Tytuł *</label>
+          <input type="text" id="field-title"
+            data-i18n-placeholder="field.title.placeholder"
+            placeholder="Krótki opis aktywności" required>
           <span class="error-msg" style="display:none"></span>
         </div>
 
         <div class="form-group">
-          <label for="field-duration">Czas (minuty) *</label>
+          <label for="field-duration" data-i18n="field.duration">Czas (minuty) *</label>
           <input type="number" id="field-duration" min="0" value="0" required>
           <span class="error-msg" style="display:none"></span>
         </div>
 
         <div class="form-group">
-          <label for="field-distance">Dystans (km)</label>
+          <label for="field-distance" data-i18n="field.distance">Dystans (km)</label>
           <input type="number" id="field-distance" min="0" step="0.1" value="0">
           <span class="error-msg" style="display:none"></span>
         </div>
 
         <div class="form-group">
-          <label for="field-notes">Notatki</label>
-          <textarea id="field-notes" rows="3" placeholder="Opcjonalne uwagi..."></textarea>
+          <label for="field-notes" data-i18n="field.notes">Notatki</label>
+          <textarea id="field-notes" rows="3"
+            data-i18n-placeholder="field.notes.placeholder"
+            placeholder="Opcjonalne uwagi..."></textarea>
         </div>
 
         <div class="form-actions">
-          <button type="submit" class="btn btn-primary">Zapisz</button>
-          <button type="button" id="btn-cancel" class="btn">Anuluj</button>
+          <button type="submit" class="btn btn-primary" data-i18n="btn.save">Zapisz</button>
+          <button type="button" id="btn-cancel" class="btn" data-i18n="btn.cancel">Anuluj</button>
         </div>
       </form>
 
@@ -120,23 +130,23 @@
     <!-- ==================== WIDOK: Statystyki ==================== -->
     <section id="view-stats" class="view">
 
-      <h2>Statystyki</h2>
+      <h2 data-i18n="stats.title">Statystyki</h2>
       <div class="stats-grid">
         <div class="stat-card">
           <div class="stat-value" id="stat-count">0</div>
-          <div class="stat-label">Aktywności</div>
+          <div class="stat-label" data-i18n="stats.count">Aktywności</div>
         </div>
         <div class="stat-card">
           <div class="stat-value" id="stat-duration">0 min</div>
-          <div class="stat-label">Łączny czas</div>
+          <div class="stat-label" data-i18n="stats.duration">Łączny czas</div>
         </div>
         <div class="stat-card">
           <div class="stat-value" id="stat-distance">0.0 km</div>
-          <div class="stat-label">Łączny dystans</div>
+          <div class="stat-label" data-i18n="stats.distance">Łączny dystans</div>
         </div>
         <div class="stat-card">
           <div class="stat-value" id="stat-top-type">–</div>
-          <div class="stat-label">Najczęstszy typ</div>
+          <div class="stat-label" data-i18n="stats.topType">Najczęstszy typ</div>
         </div>
       </div>
 
@@ -145,33 +155,40 @@
   </main>
 
   <!-- ==================== MODAL: Potwierdzenie usunięcia ==================== -->
-  <div id="confirm-delete" class="modal-overlay" role="dialog" aria-modal="true" aria-labelledby="confirm-delete-heading">
+  <div id="confirm-delete" class="modal-overlay" role="dialog" aria-modal="true"
+    aria-labelledby="confirm-delete-heading">
     <div class="modal">
-      <p id="confirm-delete-heading">Czy na pewno chcesz usunąć tę aktywność?</p>
+      <p id="confirm-delete-heading" data-i18n="modal.deleteTitle">
+        Czy na pewno chcesz usunąć tę aktywność?
+      </p>
       <div class="modal-actions">
-        <button id="confirm-delete-yes" class="btn btn-danger">Usuń</button>
-        <button id="confirm-delete-no" class="btn">Anuluj</button>
+        <button id="confirm-delete-yes" class="btn btn-danger" data-i18n="modal.deleteYes">Usuń</button>
+        <button id="confirm-delete-no"  class="btn"            data-i18n="modal.deleteNo">Anuluj</button>
       </div>
     </div>
   </div>
 
   <!-- ==================== MODAL: Potwierdzenie importu ==================== -->
-  <div id="confirm-import" class="modal-overlay" role="dialog" aria-modal="true" aria-labelledby="confirm-import-heading">
+  <div id="confirm-import" class="modal-overlay" role="dialog" aria-modal="true"
+    aria-labelledby="confirm-import-heading">
     <div class="modal">
-      <p id="confirm-import-heading">Jak chcesz zaimportować dane?</p>
-      <p class="modal-sub">
+      <p id="confirm-import-heading" data-i18n="modal.importTitle">
+        Jak chcesz zaimportować dane?
+      </p>
+      <p class="modal-sub" data-i18n-html="modal.importSub">
         <strong>Zastąp</strong> – usuwa obecne dane i wczytuje nowe.<br>
         <strong>Scal</strong> – dodaje nowe wpisy do istniejących (pomija duplikaty wg ID).
       </p>
       <div class="modal-actions">
-        <button id="confirm-import-replace" class="btn btn-danger">Zastąp dane</button>
-        <button id="confirm-import-merge" class="btn btn-primary">Scal z istniejącymi</button>
-        <button id="confirm-import-cancel" class="btn">Anuluj</button>
+        <button id="confirm-import-replace" class="btn btn-danger"  data-i18n="modal.importReplace">Zastąp dane</button>
+        <button id="confirm-import-merge"   class="btn btn-primary" data-i18n="modal.importMerge">Scal z istniejącymi</button>
+        <button id="confirm-import-cancel"  class="btn"             data-i18n="modal.importCancel">Anuluj</button>
       </div>
     </div>
   </div>
 
   <script src="js/storage.js"></script>
+  <script src="js/i18n.js"></script>
   <script src="js/app.js"></script>
 </body>
 </html>
