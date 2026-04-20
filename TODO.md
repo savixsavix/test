@@ -151,3 +151,160 @@ Lista zadań do wykonania w celu zbudowania aplikacji. Zadania ułożone w kolej
 - [ ] Import błędnego pliku – komunikat błędu w UI
 - [ ] Responsywność – weryfikacja na szerokości < 480px
 - [ ] Działanie po odświeżeniu strony (dane w `localStorage` zachowane)
+
+---
+
+## Plan sesji agenta
+
+Podział zadań na sesje zoptymalizowany pod kątem spójności kontekstu, minimalnej liczby zależności między sesjami i możliwości weryfikacji wyniku na końcu każdej sesji.
+
+---
+
+### Sesja 1 – Fundament: struktura projektu i warstwa danych
+
+**Zakres:** grupy zadań 1 i 2
+**Cel:** działający szkielet plików + kompletna logika `localStorage`
+
+Zadania:
+- Inicjalizacja struktury katalogów i plików
+- Implementacja całego `js/storage.js` (loadEntries, saveEntries, addEntry, updateEntry, deleteEntry, getEntryById)
+
+**Weryfikacja po sesji:** w konsoli przeglądarki można wywołać `addEntry({...})`, `loadEntries()`, `deleteEntry(id)` i zobaczyć poprawne dane w `localStorage`.
+
+**Kontekst do przekazania następnej sesji:** gotowy `js/storage.js` z wyeksportowanymi funkcjami.
+
+---
+
+### Sesja 2 – Szkielet HTML i nawigacja między widokami
+
+**Zakres:** grupy zadań 3 i fragment 6 (`showView`)
+**Cel:** kompletna struktura HTML + działające przełączanie sekcji
+
+Zadania:
+- Budowa `index.html`: nawigacja, sekcje `#view-list`, `#view-form`, `#view-stats`, `#confirm-import`
+- Implementacja `showView(viewId)` w `js/app.js`
+- Podłączenie nawigacji do `showView`
+
+**Weryfikacja po sesji:** kliknięcie w nawigacji przełącza widoczną sekcję, pozostałe są ukryte.
+
+**Kontekst do przekazania następnej sesji:** gotowy `index.html` z ID wszystkich sekcji i `showView`.
+
+---
+
+### Sesja 3 – Formularz, walidacja i operacja Create
+
+**Zakres:** grupy zadań 4, 5 i fragment 6 (`handleFormSubmit`, `openAddForm`)
+**Cel:** można dodać pierwszą aktywność i zobaczyć ją w `localStorage`
+
+Zadania:
+- Dodanie wszystkich pól formularza w HTML
+- Implementacja walidacji per-pole z komunikatami w UI
+- Implementacja `openAddForm()` i `handleFormSubmit()` (tylko ścieżka Create)
+
+**Weryfikacja po sesji:** wypełnienie i wysłanie formularza zapisuje wpis w `localStorage`; puste wymagane pola blokują zapis i pokazują błędy przy polach.
+
+**Kontekst do przekazania następnej sesji:** działający formularz Add + walidacja.
+
+---
+
+### Sesja 4 – Lista, edycja i usuwanie
+
+**Zakres:** grupy zadań 7 i pozostała część 6 (`renderList`, `openEditForm`, `handleDelete`)
+**Cel:** pełny cykl CRUD widoczny w UI
+
+Zadania:
+- Implementacja `renderList(entries)` – generowanie kart/wierszy w DOM
+- Obsługa stanu pustej listy
+- Implementacja `openEditForm(id)` – prefill formularza, ścieżka Update w `handleFormSubmit`
+- Implementacja `handleDelete(id)` z własnym UI potwierdzenia (bez `confirm()`)
+- Odświeżanie listy po każdej operacji
+
+**Weryfikacja po sesji:** dodawanie, edycja i usuwanie wpisów działa end-to-end; lista odświeża się natychmiast.
+
+**Kontekst do przekazania następnej sesji:** działający pełny CRUD.
+
+---
+
+### Sesja 5 – Filtrowanie, sortowanie i statystyki
+
+**Zakres:** grupy zadań 8 i 9
+**Cel:** lista daje się filtrować i sortować; panel statystyk pokazuje poprawne dane
+
+Zadania:
+- Dodanie kontrolek filtrów i sortowania w HTML
+- Implementacja `filterEntries(entries, filters)` i `sortEntries(entries, field, direction)`
+- Podpięcie kontrolek – każda zmiana przelicza i re-renderuje listę
+- Przycisk „Resetuj filtry"
+- Implementacja widoku statystyk (4 agregaty odświeżane przy każdej zmianie danych)
+
+**Weryfikacja po sesji:** zmiana filtru lub sortowania natychmiast aktualizuje listę; statystyki zgadzają się z danymi w `localStorage`.
+
+**Kontekst do przekazania następnej sesji:** działające filtrowanie, sortowanie i statystyki.
+
+---
+
+### Sesja 6 – Eksport i import JSON
+
+**Zakres:** grupa zadań 10
+**Cel:** dane można wyeksportować do pliku i zaimportować z pliku
+
+Zadania:
+- Implementacja `exportJSON()` – pobranie pliku przez `<a download>`
+- Implementacja `importJSON(file)` przez `FileReader`
+- Walidacja struktury importowanego pliku
+- Modal potwierdzenia z wyborem „Zastąp" / „Scal"
+- Obsługa błędnego pliku (komunikat w UI)
+
+**Weryfikacja po sesji:** eksport pobiera plik `.json`; import wczytuje plik, pyta o tryb i aktualizuje dane; błędny plik pokazuje komunikat.
+
+**Kontekst do przekazania następnej sesji:** działający eksport i import.
+
+---
+
+### Sesja 7 – Stylowanie i responsywność
+
+**Zakres:** grupa zadań 11
+**Cel:** aplikacja wygląda spójnie i działa na urządzeniach mobilnych
+
+Zadania:
+- Definicja zmiennych CSS (kolory, fonty, spacing)
+- Style nawigacji i przełączania widoków
+- Style formularza + stany `.field-error` / `.field-valid`
+- Style listy aktywności (karty)
+- Style sekcji statystyk
+- Style modalu potwierdzenia
+- Responsywność mobile-first (breakpoint ~768px)
+
+**Weryfikacja po sesji:** aplikacja wygląda poprawnie na szerokości 375px i 1280px; błędy walidacji są wizualnie wyróżnione.
+
+**Kontekst do przekazania następnej sesji:** gotowe style.
+
+---
+
+### Sesja 8 – Testy manualne i wdrożenie
+
+**Zakres:** grupy zadań 12 i 13
+**Cel:** aplikacja zweryfikowana i dostępna publicznie
+
+Zadania:
+- Przejście przez wszystkie 12 scenariuszy testów manualnych
+- Naprawienie znalezionych błędów
+- Konfiguracja GitHub Pages
+- Weryfikacja działania pod publicznym URL
+
+**Weryfikacja po sesji:** wszystkie testy manualne zaliczone; aplikacja dostępna pod adresem GitHub Pages.
+
+---
+
+### Podsumowanie sesji
+
+| Sesja | Grupy zadań | Główny wynik |
+|-------|-------------|--------------|
+| 1 | 1–2 | Warstwa danych w `localStorage` |
+| 2 | 3 + fragment 6 | Szkielet HTML + nawigacja |
+| 3 | 4–5 + fragment 6 | Formularz Add + walidacja |
+| 4 | 7 + reszta 6 | Pełny CRUD w UI |
+| 5 | 8–9 | Filtrowanie, sortowanie, statystyki |
+| 6 | 10 | Eksport i import JSON |
+| 7 | 11 | Style i responsywność |
+| 8 | 12–13 | Testy i wdrożenie |
